@@ -35,6 +35,43 @@ namespace Chess
         public readonly int Row => Y;
 
 
+        public override int GetHashCode()
+        {
+            // X and Y can only be between 0 and 7 (inclusive).
+            // The following produces unique hash codes for each position,
+            // based on how squares of the chess board are commonly numbered.
+            // For example: http://hgm.nubati.net/book_format.html
+            // A description of the Polyglot opening book format uses:
+            //   a1 == 0, h1 == 7, a2 == 8, ..., h8 == 63
+            // which is reproduced by this hashing function.
+            return Y * 8 + X;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Position position)
+            {
+                return Equals(position);
+            }
+            return false;
+        }
+
+        public bool Equals(Position position)
+        {
+            return X == position.X && Y == position.Y;
+        }
+
+        public static bool operator ==(Position lhs, Position rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static bool operator !=(Position lhs, Position rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+
         public override string ToString()
         {
             char file = (char) ('a' + X);

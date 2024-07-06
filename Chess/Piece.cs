@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 
 namespace Chess
@@ -30,7 +31,18 @@ namespace Chess
         /// </remarks>
         internal void UpdateLegalMoves()
         {
-
+            // If it is not this piece's turn, it cannot move.
+            if (Color != Game.Turn)
+            {
+                LegalMoves = new List<Move>().AsReadOnly();
+                return;
+            }
+            // Otherwise, determine which psuedo-legal moves are legal.
+            IEnumerable<Move> psuedoLegalMoves = GeneratePsuedoLegalMoves();
+            IEnumerable<Move> legalMoves = psuedoLegalMoves.Where(
+                move => Game.IsLegalMove(move)
+            );
+            LegalMoves = legalMoves.ToList().AsReadOnly();
         }
 
         /// <summary>
@@ -44,12 +56,13 @@ namespace Chess
         /// </returns>
         internal bool IsAttacking(Position position)
         {
-            return false;
+            IEnumerable<Move> psuedoLegalMoves = GeneratePsuedoLegalMoves();
+            return psuedoLegalMoves.Any(move => move.Destination == position);
         }
 
 
         /// <summary>
-        /// Generates a collection of
+        /// Generates an enumerable of
         /// <a href="https://www.chessprogramming.org/Pseudo-Legal_Move">
         /// psuedo-legal moves
         /// </a>,
@@ -57,11 +70,11 @@ namespace Chess
         /// whether the king is in check after the move is made.
         /// </summary>
         /// <returns>
-        /// A collection of
+        /// An enumerable of
         /// <a href="https://www.chessprogramming.org/Pseudo-Legal_Move">
         /// psuedo-legal moves
         /// </a>.
         /// </returns>
-        protected abstract ICollection<Move> GeneratePsuedoLegalMoves();
+        protected abstract IEnumerable<Move> GeneratePsuedoLegalMoves();
     }
 }
