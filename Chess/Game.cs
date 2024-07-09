@@ -1,5 +1,4 @@
 ﻿using Chess.Pieces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,12 +11,15 @@ namespace Chess
         public Game()
         {
             board = new Piece[8, 8];
+            // Kings
+            WhiteKing = new King     (Color.White, new Position(4, 0), this);
+            BlackKing = new King     (Color.Black, new Position(4, 7), this);
             // White pieces (1st rank)
             board[0, 0] = new Rook   (Color.White, new Position(0, 0), this);
             board[1, 0] = new Knight (Color.White, new Position(1, 0), this);
             board[2, 0] = new Bishop (Color.White, new Position(2, 0), this);
             board[3, 0] = new Queen  (Color.White, new Position(3, 0), this);
-            board[4, 0] = new King   (Color.White, new Position(4, 0), this);
+            board[4, 0] = WhiteKing;
             board[5, 0] = new Bishop (Color.White, new Position(5, 0), this);
             board[6, 0] = new Knight (Color.White, new Position(6, 0), this);
             board[7, 0] = new Rook   (Color.White, new Position(7, 0), this);
@@ -44,24 +46,22 @@ namespace Chess
             board[1, 7] = new Knight (Color.Black, new Position(1, 7), this);
             board[2, 7] = new Bishop (Color.Black, new Position(2, 7), this);
             board[3, 7] = new Queen  (Color.Black, new Position(3, 7), this);
-            board[4, 7] = new King   (Color.Black, new Position(4, 7), this);
+            board[4, 7] = BlackKing;
             board[5, 7] = new Bishop (Color.Black, new Position(5, 7), this);
             board[6, 7] = new Knight (Color.Black, new Position(6, 7), this);
             board[7, 7] = new Rook   (Color.Black, new Position(7, 7), this);
-            // Kings
-            WhiteKing = (King) board[4, 0];
-            BlackKing = (King) board[4, 7];
             // White and Black Pieces
-            IList<Piece> whitePieces = new List<Piece>();
-            IList<Piece> blackPieces = new List<Piece>();
-            foreach (Piece piece in board)
+            pieces = new List<Piece>();
+            foreach (Piece? piece in board)
             {
                 if (piece == null) continue;
-                if (piece.Color == Color.White) whitePieces.Add(piece);
-                if (piece.Color == Color.Black) blackPieces.Add(piece);
+                pieces.Add(piece);
             }
-            WhitePieces = whitePieces.ToList().AsReadOnly();
-            BlackPieces = blackPieces.ToList().AsReadOnly();
+            whitePieces = pieces.Where(piece => piece.Color == Color.White).ToList();
+            blackPieces = pieces.Where(piece => piece.Color == Color.Black).ToList();
+            // Legal moves
+            legalMoves = new List<Move>();
+            UpdateLegalMoves();
         }
 
 
@@ -70,10 +70,18 @@ namespace Chess
         public readonly King WhiteKing;
         public readonly King BlackKing;
 
-        public IReadOnlyCollection<Piece> WhitePieces { get; private set; }
-        public IReadOnlyCollection<Piece> BlackPieces { get; private set; }
+        public IReadOnlyCollection<Piece> Pieces => pieces.AsReadOnly();
+        public IReadOnlyCollection<Piece> WhitePieces => whitePieces.AsReadOnly();
+        public IReadOnlyCollection<Piece> BlackPieces => blackPieces.AsReadOnly();
 
-        private Piece[,] board;
+        public IReadOnlyCollection<Move> LegalMoves => legalMoves.AsReadOnly();
+
+        private Piece?[,] board;
+        private List<Piece> pieces;
+        private List<Piece> whitePieces;
+        private List<Piece> blackPieces;
+
+        private List<Move> legalMoves;
 
 
         /// <summary>
@@ -82,7 +90,7 @@ namespace Chess
         /// <param name="x">The file (column) of the position.</param>
         /// <param name="y">The rank (row) of the position.</param>
         /// <returns>The piece at the position on the board.</returns>
-        public Piece GetPiece(int x, int y)
+        public Piece? GetPiece(int x, int y)
         {
             return GetPiece(new Position(x, y));
         }
@@ -92,7 +100,7 @@ namespace Chess
         /// </summary>
         /// <param name="position">The position on the board.</param>
         /// <returns>The piece at the position on the board.</returns>
-        public Piece GetPiece(Position position)
+        public Piece? GetPiece(Position position)
         {
             return board[position.X, position.Y];
         }
@@ -107,9 +115,25 @@ namespace Chess
         /// </a>.
         /// </param>
         /// <returns>The piece at the position on the board.</returns>
-        public Piece GetPiece(string algebraicNotation)
+        public Piece? GetPiece(string algebraicNotation)
         {
             return GetPiece(new Position(algebraicNotation));
+        }
+
+
+        /// <summary>
+        /// Updates <c>LegalMoves</c> for all pieces.
+        /// Updates <c>LegalMoves</c> for this <c>Game</c>
+        /// to be all legal moves.
+        /// </summary>
+        internal void UpdateLegalMoves()
+        {
+            legalMoves.Clear();
+            foreach (Piece piece in Pieces)
+            {
+                piece.UpdateLegalMoves();
+                legalMoves.Concat(piece.LegalMoves);
+            }
         }
 
 
@@ -133,9 +157,69 @@ namespace Chess
         /// </a>
         /// is legal; otherwise, false.
         /// </returns>
+        /// <remarks>
+        /// Intended only to be called by <c>Piece</c> for each of the
+        /// <a href="https://www.chessprogramming.org/Pseudo-Legal_Move">
+        /// psuedo-legal moves
+        /// </a>
+        /// it generates.
+        /// </remarks>
         internal bool IsLegalMove(Move psuedoLegalMove)
         {
-            return false;
+            // Pretend to make the move.
+            int ox = psuedoLegalMove.Origin.X;
+            int oy = psuedoLegalMove.Origin.Y;
+            int dx = psuedoLegalMove.Destination.X;
+            int dy = psuedoLegalMove.Destination.Y;
+            Piece? capturedPiece = board[dx, dy];
+            board[dx, dy] = board[ox, oy];
+            board[ox, oy] = null;
+            // Check if the king is attacked.
+            King king;
+            IReadOnlyCollection<Piece> opposingPieces;
+            if (Turn == Color.White)
+            {
+                king = WhiteKing;
+                opposingPieces = BlackPieces;
+            }
+            else
+            {
+                king = BlackKing;
+                opposingPieces = WhitePieces;
+            }
+            bool isKingAttacked = false;
+            foreach (Piece piece in opposingPieces)
+            {
+                if (piece == capturedPiece) continue;
+                isKingAttacked = piece.IsAttacking(king.Position);
+                if (isKingAttacked) break;
+            }
+            // Undo the move.
+            board[ox, oy] = board[dx, dy];
+            board[dx, dy] = capturedPiece;
+            // Return.
+            return isKingAttacked;
+        }
+
+
+        /// <summary>
+        /// Toggles <c>Turn</c> from white to black or vice versa.
+        /// </summary>
+        internal void ToggleTurn()
+        {
+            switch (Turn)
+            {
+                case Color.White:
+                {
+                    Turn = Color.Black;
+                    break;
+                }
+                case Color.Black:
+                {
+                    Turn = Color.White;
+                    break;
+                }
+            }
         }
     }
 }
