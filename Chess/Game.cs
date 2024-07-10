@@ -60,6 +60,7 @@ namespace Chess
             whitePieces = pieces.Where(piece => piece.Color == Color.White).ToList();
             blackPieces = pieces.Where(piece => piece.Color == Color.Black).ToList();
             // Legal moves
+            Turn = Color.White;
             legalMoves = new List<Move>();
             UpdateLegalMoves();
         }
@@ -132,7 +133,7 @@ namespace Chess
             foreach (Piece piece in Pieces)
             {
                 piece.UpdateLegalMoves();
-                legalMoves.Concat(piece.LegalMoves);
+                legalMoves.AddRange(piece.LegalMoves);
             }
         }
 
@@ -198,7 +199,7 @@ namespace Chess
             board[ox, oy] = board[dx, dy];
             board[dx, dy] = capturedPiece;
             // Return.
-            return isKingAttacked;
+            return !isKingAttacked;
         }
 
 

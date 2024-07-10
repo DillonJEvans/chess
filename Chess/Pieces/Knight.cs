@@ -11,7 +11,16 @@ namespace Chess.Pieces
 
         protected override IEnumerable<Move> GeneratePsuedoLegalMoves()
         {
-            return new List<Move>();
+            ICollection<Move> psuedoLegalMoves = new List<Move>();
+            AddMove(psuedoLegalMoves, -1,  2); // 2 up     1 left
+            AddMove(psuedoLegalMoves,  1,  2); // 2 up     1 right
+            AddMove(psuedoLegalMoves,  2,  1); // 2 right  1 up
+            AddMove(psuedoLegalMoves,  2, -1); // 2 right  1 down
+            AddMove(psuedoLegalMoves,  1, -2); // 2 down   1 right
+            AddMove(psuedoLegalMoves, -1, -2); // 2 down   1 left
+            AddMove(psuedoLegalMoves, -2, -1); // 2 left   1 down
+            AddMove(psuedoLegalMoves, -2,  1); // 2 left   1 up
+            return psuedoLegalMoves;
         }
     }
 }

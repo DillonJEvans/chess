@@ -35,6 +35,36 @@ namespace Chess
         public readonly int Row => Y;
 
 
+        /// <summary>
+        /// Adds (x, y) to this position,
+        /// storing the result in <paramref name="result"/>.
+        /// </summary>
+        /// <remarks>
+        /// Does not alter this position since positions are immutable.
+        /// </remarks>
+        /// <param name="x">The X to add to this position.</param>
+        /// <param name="y">The Y to add to this position.</param>
+        /// <param name="result">
+        /// The result of the addition. Ignore this value if false is returned.
+        /// </param>
+        /// <returns>
+        /// True if adding (x, y) to this position was a success;
+        /// false if the addition would have produced an invalid position.
+        /// </returns>
+        internal bool Add(int x, int y, out Position result)
+        {
+            int sumX = X + x;
+            int sumY = Y + y;
+            if (sumX < 0 || sumX > 7 || sumY < 0 || sumY > 7)
+            {
+                result = default;
+                return false;
+            }
+            result = new Position(sumX, sumY);
+            return true;
+        }
+
+
         public override int GetHashCode()
         {
             // X and Y can only be between 0 and 7 (inclusive).
