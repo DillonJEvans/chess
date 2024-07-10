@@ -5,7 +5,7 @@ namespace Chess.Pieces
 {
     public class Rook : Piece
     {
-        public Rook(Color color, Position position, Game game)
+        internal Rook(Color color, Position position, Game game)
             : base(color, position, game) { }
 
 

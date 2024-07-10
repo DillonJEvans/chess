@@ -6,7 +6,7 @@ namespace Chess
 {
     public abstract class Piece
     {
-        public Piece(Color color, Position position, Game game)
+        internal Piece(Color color, Position position, Game game)
         {
             Color = color;
             Position = position;
