@@ -167,38 +167,42 @@ namespace Chess
         /// </remarks>
         internal bool IsLegalMove(Move psuedoLegalMove)
         {
-            // Pretend to make the move.
+            // Variables to make indexing more convenient.
             int ox = psuedoLegalMove.Origin.X;
             int oy = psuedoLegalMove.Origin.Y;
             int dx = psuedoLegalMove.Destination.X;
             int dy = psuedoLegalMove.Destination.Y;
+            // Temporarily make the move.
             Piece? capturedPiece = board[dx, dy];
             board[dx, dy] = board[ox, oy];
             board[ox, oy] = null;
-            // Check if the king is attacked.
-            King king;
+            // Get the king and the pieces that might be checking the king.
+            Position king;
             IReadOnlyCollection<Piece> opposingPieces;
             if (Turn == Color.White)
             {
-                king = WhiteKing;
+                king = WhiteKing.Position;
                 opposingPieces = BlackPieces;
             }
             else
             {
-                king = BlackKing;
+                king = BlackKing.Position;
                 opposingPieces = WhitePieces;
             }
-            bool isKingAttacked = false;
-            foreach (Piece piece in opposingPieces)
+            // If the king is the piece being moved, use it's position
+            // after the move rather than it's position before the move.
+            if (king == psuedoLegalMove.Origin)
             {
-                if (piece == capturedPiece) continue;
-                isKingAttacked = piece.IsAttacking(king.Position);
-                if (isKingAttacked) break;
+                king = psuedoLegalMove.Destination;
             }
+            // Determine if the king is being attacked or not.
+            bool isKingAttacked = opposingPieces.Any(piece =>
+                piece != capturedPiece && piece.IsAttacking(king));
             // Undo the move.
             board[ox, oy] = board[dx, dy];
             board[dx, dy] = capturedPiece;
-            // Return.
+            // If the king would be in check after the move is made,
+            // the move is not legal; otherwise, the move is legal.
             return !isKingAttacked;
         }
 
