@@ -1,5 +1,8 @@
-﻿namespace Chess
+﻿namespace Chess.Core
 {
+    /// <summary>
+    /// A chess move, moving a piece from one square to another.
+    /// </summary>
     public class Move
     {
         public Move(Position origin, Position destination)

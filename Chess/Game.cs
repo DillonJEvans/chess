@@ -1,10 +1,14 @@
-﻿using Chess.Pieces;
+﻿using Chess.Core;
+using Chess.Pieces;
 using System.Collections.Generic;
 using System.Linq;
 
 
 namespace Chess
 {
+    /// <summary>
+    /// A game of chess.
+    /// </summary>
     public class Game
     {
         // Temporary default constructor

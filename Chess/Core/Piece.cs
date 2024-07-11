@@ -2,8 +2,11 @@
 using System.Linq;
 
 
-namespace Chess
+namespace Chess.Core
 {
+    /// <summary>
+    /// A chess piece.
+    /// </summary>
     public abstract class Piece
     {
         internal Piece(Color color, Position position, Game game)

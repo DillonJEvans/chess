@@ -1,10 +1,29 @@
 ﻿using System.Diagnostics.Contracts;
 
 
-namespace Chess
+namespace Chess.Core
 {
+    /// <summary>
+    /// A position on the chess board.
+    /// </summary>
+    /// <remarks>
+    /// This struct is immutable.
+    /// X and Y will always be between 0 and 7,
+    /// where (0, 0) is a1 and (7, 7) is h8.
+    /// The properties X, File, and Column are identical.
+    /// The properties Y, Rank, and Row are identical.
+    /// </remarks>
     public readonly struct Position
     {
+        /// <summary>
+        /// Constructs a new position with the given X and Y.
+        /// </summary>
+        /// <param name="x">
+        /// The X of the position. Must be between 0 and 7.
+        /// </param>
+        /// <param name="y">
+        /// The Y of the position. Must be between 0 and 7.
+        /// </param>
         public Position(int x, int y)
         {
             Contract.Requires(x < 0 || x > 7, "X must be between 0 and 7.");
@@ -13,9 +32,23 @@ namespace Chess
             Y = y;
         }
 
+        /// <summary>
+        /// Constructs a new position from
+        /// <a href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)">
+        /// algebraic notation
+        /// </a>.
+        /// </summary>
+        /// <param name="algebraicNotation">
+        /// The position in
+        /// <a href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)">
+        /// algebraic notation
+        /// </a>.
+        /// Must be exactly 2 characters long. Must be lowercase.
+        /// </param>
         public Position(string algebraicNotation)
         {
-            Contract.Requires(algebraicNotation.Length != 2, "Algebraic notation must have a length of exactly 2.");
+            Contract.Requires(algebraicNotation.Length != 2,
+                "Algebraic notation must have a length of exactly 2.");
             int x = algebraicNotation[0] - 'a';
             int y = algebraicNotation[1] - '1';
             Contract.Requires(x < 0 || x > 7, "File must be between a and h.");
@@ -104,7 +137,7 @@ namespace Chess
 
         public override string ToString()
         {
-            char file = (char) ('a' + X);
+            char file = (char)('a' + X);
             int rank = Y + 1;
             return $"{file}{rank}";
         }
