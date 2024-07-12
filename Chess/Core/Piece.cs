@@ -14,15 +14,17 @@ namespace Chess.Core
             Color = color;
             Position = position;
             Game = game;
-            LegalMoves = new List<Move>().AsReadOnly();
+            legalMoves = new List<Move>();
         }
 
 
         public readonly Color Color;
         public Position Position { get; internal set; }
-        public IReadOnlyCollection<Move> LegalMoves { get; private set; }
+        public IReadOnlyCollection<Move> LegalMoves => legalMoves.AsReadOnly();
 
         protected Game Game { get; }
+
+        private List<Move> legalMoves;
 
 
         /// <summary>
@@ -34,18 +36,21 @@ namespace Chess.Core
         /// </remarks>
         internal void UpdateLegalMoves()
         {
+            legalMoves.Clear();
             // If it is not this piece's turn, it cannot move.
             if (Color != Game.Turn)
             {
-                LegalMoves = new List<Move>().AsReadOnly();
                 return;
             }
-            // Otherwise, determine which psuedo-legal moves are legal.
+            // Otherwise, add every legal move to the legalMoves list.
             IEnumerable<Move> psuedoLegalMoves = GeneratePsuedoLegalMoves();
-            IEnumerable<Move> legalMoves = psuedoLegalMoves.Where(
-                move => Game.IsLegalMove(move)
-            );
-            LegalMoves = legalMoves.ToList().AsReadOnly();
+            foreach (Move psuedoLegalMove in psuedoLegalMoves)
+            {
+                if (Game.IsLegalMove(psuedoLegalMove))
+                {
+                    legalMoves.Add(psuedoLegalMove);
+                }
+            }
         }
 
         /// <summary>
