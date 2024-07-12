@@ -88,44 +88,49 @@ namespace Chess.Core
 
         /// <summary>
         /// Potentially adds a move to <paramref name="psuedoLegalMoves"/>.
-        /// The move goes from <c>Position</c> to
-        /// <c>Position</c> plus the given delta.
-        /// 
-        /// The move is not added to the collection if the destination
+        /// The origin of the move would be <c>Position</c>,
+        /// and the destination would be <c>Position</c> plus the given delta.
+        /// The move is not added if the destination
         /// is off the board or occupied by a friendly piece.
-        /// 
-        /// None of the squares between <c>Position</c>
-        /// and the destination are considered, as if
-        /// the piece is teleported to the destination.
         /// </summary>
-        /// <remarks>
-        /// Used for Knights and moves to adjacent squares.
-        /// </remarks>
-        /// <param name="psuedoLegalMoves">
-        /// The collection of psuedo-legal moves to add to.
-        /// </param>
+        /// <param name="psuedoLegalMoves">The collection of psuedo-legal moves to add to.</param>
         /// <param name="deltaX">
         /// The difference in X from <c>Position</c> to the destination.
         /// </param>
         /// <param name="deltaY">
         /// The difference in Y from <c>Position</c> to the destination.
         /// </param>
-        protected void AddMove(ICollection<Move> psuedoLegalMoves,
+        /// <param name="addNonCaptures">Whether or not non-capturing moves will be added.</param>
+        /// <param name="addCaptures">Whether or not capturing moves will be added.</param>
+        /// <returns>True if the move was added; otherwise, false.</returns>
+        protected bool AddMove(ICollection<Move> psuedoLegalMoves,
                                int deltaX,
-                               int deltaY)
+                               int deltaY,
+                               bool addNonCaptures = true,
+                               bool addCaptures = true)
         {
             // Don't add the move if the destination is not on the board.
             if (!Position.Add(deltaX, deltaY, out Position destination))
             {
-                return;
+                return false;
             }
             Piece? capturedPiece = Game.GetPiece(destination);
-            // Only add the move if the square is unoccupied,
-            // or occupied by an opposing piece.
-            if (capturedPiece?.Color != Color)
+            bool isCapture = capturedPiece != null;
+            // If the destination is occupied by a friendly piece, do not add the move.
+            if (capturedPiece?.Color == Color)
             {
-                psuedoLegalMoves.Add(new Move(Position, destination));
+                return false;
             }
+            // If the move is not a capture and non-captures aren't added,
+            // or if the move is a capture and captures aren't added,
+            // don't add the move.
+            if ((!isCapture && !addNonCaptures) || (isCapture && !addCaptures))
+            {
+                return false;
+            }
+            // Add the move.
+            psuedoLegalMoves.Add(new Move(Position, destination));
+            return true;
         }
 
         /// <summary>
@@ -134,11 +139,6 @@ namespace Chess.Core
         /// that go from <c>Position</c> to each square.
         /// Stops once the end of the board or another piece is found.
         /// </summary>
-        /// <remarks>
-        /// Conceptually can be thought of as casting a ray from
-        /// <c>Position</c> in the given direction until a collision occurs.
-        /// Used for the "ray" pieces: Queen, Rook, and Bishop.
-        /// </remarks>
         /// <param name="psuedoLegalMoves">
         /// The collection of psuedo-legal moves to add to.
         /// </param>
