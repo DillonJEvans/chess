@@ -10,8 +10,6 @@ namespace Chess.Core
     /// This struct is immutable.
     /// X and Y will always be between 0 and 7,
     /// where (0, 0) is a1 and (7, 7) is h8.
-    /// The properties X, File, and Column are identical.
-    /// The properties Y, Rank, and Row are identical.
     /// </remarks>
     public readonly struct Position
     {
@@ -58,14 +56,45 @@ namespace Chess.Core
         }
 
 
+        /// <summary>
+        /// The X component of the position.
+        /// </summary>
+        /// <remarks>
+        /// Between 0 and 7 inclusive,
+        /// where 0 is the 'a' file and 7 is the 'h' file.
+        /// </remarks>
         public readonly int X;
+        /// <summary>
+        /// The Y component of the position.
+        /// </summary>
+        /// <remarks>
+        /// Between 0 and 7 inclusive,
+        /// where 0 is the 1st rank and 7 is the 8th rank.
+        /// </remarks>
         public readonly int Y;
 
-        public readonly int File => X;
-        public readonly int Rank => Y;
-
-        public readonly int Column => X;
-        public readonly int Row => Y;
+        /// <summary>
+        /// The
+        /// <a href="https://en.wikipedia.org/wiki/Chessboard">
+        /// file
+        /// </a>
+        /// of the position.
+        /// </summary>
+        /// <remarks>
+        /// Between 'a' and 'h', inclusive.
+        /// </remarks>
+        public readonly char File => (char) ('a' + X);
+        /// <summary>
+        /// The
+        /// <a href="https://en.wikipedia.org/wiki/Chessboard">
+        /// rank
+        /// </a>
+        /// of the position.
+        /// </summary>
+        /// <remarks>
+        /// Between 1 and 8, inclusive.
+        /// </remarks>
+        public readonly int Rank => Y + 1;
 
 
         /// <summary>
@@ -135,11 +164,6 @@ namespace Chess.Core
         }
 
 
-        public override string ToString()
-        {
-            char file = (char)('a' + X);
-            int rank = Y + 1;
-            return $"{file}{rank}";
-        }
+        public override string ToString() => $"{File}{Rank}";
     }
 }
