@@ -65,6 +65,10 @@ namespace Chess
             blackPieces = pieces.Where(piece => piece.Color == Color.Black).ToList();
             // Legal moves
             Turn = Color.White;
+            CanWhiteCastleKingside = true;
+            CanWhiteCastleQueenside = true;
+            CanBlackCastleKingside = true;
+            CanBlackCastleQueenside = true;
             legalMoves = new List<Move>();
             UpdateLegalMoves();
         }
@@ -80,6 +84,11 @@ namespace Chess
         public IReadOnlyCollection<Piece> BlackPieces => blackPieces.AsReadOnly();
 
         public IReadOnlyCollection<Move> LegalMoves => legalMoves.AsReadOnly();
+
+        public bool CanWhiteCastleKingside { get; private set; }
+        public bool CanWhiteCastleQueenside { get; private set; }
+        public bool CanBlackCastleKingside { get; private set; }
+        public bool CanBlackCastleQueenside { get; private set; }
 
         private Piece?[,] board;
         private List<Piece> pieces;
@@ -123,6 +132,51 @@ namespace Chess
         public Piece? GetPiece(string algebraicNotation)
         {
             return GetPiece(new Position(algebraicNotation));
+        }
+
+
+        /// <summary>
+        /// Retrieves the king of the specified color.
+        /// </summary>
+        /// <param name="color">The color of the king to retrieve.</param>
+        /// <returns>The king of the specified color.</returns>
+        public King GetKing(Color color)
+        {
+            return color == Color.White ? WhiteKing : BlackKing;
+        }
+
+        /// <summary>
+        /// Retrieves the pieces of the specified color.
+        /// </summary>
+        /// <param name="color">The color of the pieces to retrieve.</param>
+        /// <returns>The pieces of the specified color.</returns>
+        public IReadOnlyCollection<Piece> GetPieces(Color color)
+        {
+            return color == Color.White ? WhitePieces : BlackPieces;
+        }
+
+        /// <summary>
+        /// Determines if the specified color has the right to castle kingside.
+        /// </summary>
+        /// <param name="color">The color.</param>
+        /// <returns>
+        /// True if the color has the right to castle kingside; otherwise, false.
+        /// </returns>
+        public bool CanCastleKingside(Color color)
+        {
+            return color == Color.White ? CanWhiteCastleKingside : CanBlackCastleKingside;
+        }
+
+        /// <summary>
+        /// Determines if the specified color has the right to castle queenside.
+        /// </summary>
+        /// <param name="color">The color.</param>
+        /// <returns>
+        /// True if the color has the right to castle queenside; otherwise, false.
+        /// </returns>
+        public bool CanCastleQueenside(Color color)
+        {
+            return color == Color.White ? CanWhiteCastleQueenside : CanBlackCastleQueenside;
         }
 
 
@@ -181,18 +235,8 @@ namespace Chess
             board[dx, dy] = board[ox, oy];
             board[ox, oy] = null;
             // Get the king and the pieces that might be checking the king.
-            Position king;
-            IReadOnlyCollection<Piece> opposingPieces;
-            if (Turn == Color.White)
-            {
-                king = WhiteKing.Position;
-                opposingPieces = BlackPieces;
-            }
-            else
-            {
-                king = BlackKing.Position;
-                opposingPieces = WhitePieces;
-            }
+            Position king = GetKing(Turn).Position;
+            IReadOnlyCollection<Piece> opposingPieces = GetPieces(Turn.Opposite());
             // If the king is the piece being moved, use it's position
             // after the move rather than it's position before the move.
             if (king == psuedoLegalMove.Origin)
@@ -212,23 +256,16 @@ namespace Chess
 
 
         /// <summary>
-        /// Toggles <c>Turn</c> from white to black or vice versa.
+        /// Determines if <paramref name="position"/> is being attacked
+        /// by <paramref name="color"/>.
         /// </summary>
-        internal void ToggleTurn()
+        /// <param name="position">The position that might be being attacked.</param>
+        /// <param name="color">The color that might be attacking position.</param>
+        /// <returns>True if the position is attacked; otherwise, false.</returns>
+        internal bool IsAttacked(Position position, Color color)
         {
-            switch (Turn)
-            {
-                case Color.White:
-                {
-                    Turn = Color.Black;
-                    break;
-                }
-                case Color.Black:
-                {
-                    Turn = Color.White;
-                    break;
-                }
-            }
+            IReadOnlyCollection<Piece> attackingPieces = GetPieces(color);
+            return attackingPieces.Any(piece => piece.IsAttacking(position));
         }
     }
 }
