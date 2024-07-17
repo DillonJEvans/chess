@@ -87,6 +87,46 @@ namespace Chess.Core
 
 
         /// <summary>
+        /// Determines if this piece can capture a piece by moving to the destination.
+        /// </summary>
+        /// <param name="deltaX">
+        /// The difference in X from <c>Position</c> to the destination.
+        /// </param>
+        /// <param name="deltaY">
+        /// The difference in Y from <c>Position</c> to the destination.
+        /// </param>
+        /// <returns>True if a piece can be captured; otherwise, false.</returns>
+        protected virtual bool CanCapture(int deltaX, int deltaY)
+        {
+            if (!Position.Add(deltaX, deltaY, out Position destination))
+            {
+                return false;
+            }
+            Piece? piece = Game.GetPiece(destination);
+            return piece != null && piece.Color != Color;
+        }
+
+        /// <summary>
+        /// Determines if the relative position is not occupied by a piece.
+        /// </summary>
+        /// <param name="deltaX">
+        /// The difference in X from <c>Position</c> to the destination.
+        /// </param>
+        /// <param name="deltaY">
+        /// The difference in Y from <c>Position</c> to the destination.
+        /// </param>
+        /// <returns>True if the relative position is unoccupied; otherwise, false.</returns>
+        protected virtual bool IsRelativePositionUnoccupied(int deltaX, int deltaY)
+        {
+            if (!Position.Add(deltaX, deltaY, out Position square))
+            {
+                return false;
+            }
+            Piece? piece = Game.GetPiece(square);
+            return piece == null;
+        }
+
+        /// <summary>
         /// Potentially adds a move to <paramref name="psuedoLegalMoves"/>.
         /// The origin of the move would be <c>Position</c>,
         /// and the destination would be <c>Position</c> plus the given delta.
@@ -100,14 +140,8 @@ namespace Chess.Core
         /// <param name="deltaY">
         /// The difference in Y from <c>Position</c> to the destination.
         /// </param>
-        /// <param name="addNonCaptures">Whether or not non-capturing moves will be added.</param>
-        /// <param name="addCaptures">Whether or not capturing moves will be added.</param>
         /// <returns>True if the move was added; otherwise, false.</returns>
-        protected bool AddMove(ICollection<Move> psuedoLegalMoves,
-                               int deltaX,
-                               int deltaY,
-                               bool addNonCaptures = true,
-                               bool addCaptures = true)
+        protected virtual bool AddMove(ICollection<Move> psuedoLegalMoves, int deltaX, int deltaY)
         {
             // Don't add the move if the destination is not on the board.
             if (!Position.Add(deltaX, deltaY, out Position destination))
@@ -115,20 +149,11 @@ namespace Chess.Core
                 return false;
             }
             Piece? capturedPiece = Game.GetPiece(destination);
-            bool isCapture = capturedPiece != null;
             // If the destination is occupied by a friendly piece, do not add the move.
             if (capturedPiece?.Color == Color)
             {
                 return false;
             }
-            // If the move is not a capture and non-captures aren't added,
-            // or if the move is a capture and captures aren't added,
-            // don't add the move.
-            if ((!isCapture && !addNonCaptures) || (isCapture && !addCaptures))
-            {
-                return false;
-            }
-            // Add the move.
             psuedoLegalMoves.Add(new Move(Position, destination));
             return true;
         }
@@ -144,7 +169,7 @@ namespace Chess.Core
         /// </param>
         /// <param name="directionX">The X of the ray's direction.</param>
         /// <param name="directionY">The Y of the ray's direction.</param>
-        protected void AddMovesAlongRay(ICollection<Move> psuedoLegalMoves,
+        protected virtual void AddMovesAlongRay(ICollection<Move> psuedoLegalMoves,
                                         int directionX,
                                         int directionY)
         {
@@ -163,6 +188,48 @@ namespace Chess.Core
                     psuedoLegalMoves.Add(new Move(Position, destination));
                 }
             }
+        }
+
+        /// <summary>
+        /// Adds a move to <paramref name="psuedoLegalMoves"/>.
+        /// Only adds the move if it does not capture a piece.
+        /// </summary>
+        /// <param name="psuedoLegalMoves">The collection of psuedo-legal moves to add to.</param>
+        /// <param name="deltaX">
+        /// The difference in X from <c>Position</c> to the destination.
+        /// </param>
+        /// <param name="deltaY">
+        /// The difference in Y from <c>Position</c> to the destination.
+        /// </param>
+        /// <returns>True if the move was added; otherwise, false.</returns>
+        protected virtual bool AddNonCapturingMove(ICollection<Move> psuedoLegalMoves, int deltaX, int deltaY)
+        {
+            if (!IsRelativePositionUnoccupied(deltaX, deltaY))
+            {
+                return false;
+            }
+            return AddMove(psuedoLegalMoves, deltaX, deltaY);
+        }
+
+        /// <summary>
+        /// Adds a move to <paramref name="psuedoLegalMoves"/>.
+        /// Only adds the move if it captures a piece.
+        /// </summary>
+        /// <param name="psuedoLegalMoves">The collection of psuedo-legal moves to add to.</param>
+        /// <param name="deltaX">
+        /// The difference in X from <c>Position</c> to the destination.
+        /// </param>
+        /// <param name="deltaY">
+        /// The difference in Y from <c>Position</c> to the destination.
+        /// </param>
+        /// <returns>True if the move was added; otherwise, false.</returns>
+        protected virtual bool AddCapturingMove(ICollection<Move> psuedoLegalMoves, int deltaX, int deltaY)
+        {
+            if (!CanCapture(deltaX, deltaY))
+            {
+                return false;
+            }
+            return AddMove(psuedoLegalMoves, deltaX, deltaY);
         }
     }
 }
