@@ -1,4 +1,5 @@
 ﻿using Chess.Core;
+using System;
 using System.Collections.Generic;
 
 
@@ -8,6 +9,9 @@ namespace Chess.Pieces
     {
         internal Pawn(Color color, Position position, Game game)
             : base(color, position, game) { }
+
+
+        public override char Symbol => 'P';
 
 
         protected override IEnumerable<Move> GeneratePsuedoLegalMoves()
@@ -58,6 +62,12 @@ namespace Chess.Pieces
                 }
             }
             return true;
+        }
+
+
+        public override string ToString()
+        {
+            return Position.ToString();
         }
     }
 }

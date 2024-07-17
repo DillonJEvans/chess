@@ -1,5 +1,6 @@
 ﻿using Chess.Core;
 using Chess.Pieces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -180,19 +181,37 @@ namespace Chess
         }
 
 
-        /// <summary>
-        /// Updates <c>LegalMoves</c> for all pieces.
-        /// Updates <c>LegalMoves</c> for this <c>Game</c>
-        /// to be all legal moves.
-        /// </summary>
-        internal void UpdateLegalMoves()
+        // Temporary move method
+        public void Move(Move move)
         {
-            legalMoves.Clear();
-            foreach (Piece piece in Pieces)
+            int ox = move.Origin.X;
+            int oy = move.Origin.Y;
+            int dx = move.Destination.X;
+            int dy = move.Destination.Y;
+            Piece? capturedPiece = board[dx, dy];
+            if (capturedPiece != null)
             {
-                piece.UpdateLegalMoves();
-                legalMoves.AddRange(piece.LegalMoves);
+                List<Piece> capturedPieces;
+                if (capturedPiece.Color == Color.White)
+                {
+                    capturedPieces = whitePieces;
+                }
+                else
+                {
+                    capturedPieces = blackPieces;
+                }
+                capturedPieces.Remove(capturedPiece);
+                pieces.Remove(capturedPiece);
             }
+            board[dx, dy] = board[ox, oy];
+            board[ox, oy] = null;
+            Piece? piece = board[dx, dy];
+            if (piece != null)
+            {
+                piece.Position = move.Destination;
+            }
+            Turn = Turn.Opposite();
+            UpdateLegalMoves();
         }
 
 
@@ -254,7 +273,6 @@ namespace Chess
             return !isKingAttacked;
         }
 
-
         /// <summary>
         /// Determines if <paramref name="position"/> is being attacked
         /// by <paramref name="color"/>.
@@ -266,6 +284,22 @@ namespace Chess
         {
             IReadOnlyCollection<Piece> attackingPieces = GetPieces(color);
             return attackingPieces.Any(piece => piece.IsAttacking(position));
+        }
+
+
+        /// <summary>
+        /// Updates <c>LegalMoves</c> for all pieces.
+        /// Updates <c>LegalMoves</c> for this <c>Game</c>
+        /// to be all legal moves.
+        /// </summary>
+        private void UpdateLegalMoves()
+        {
+            legalMoves.Clear();
+            foreach (Piece piece in Pieces)
+            {
+                piece.UpdateLegalMoves();
+                legalMoves.AddRange(piece.LegalMoves);
+            }
         }
     }
 }

@@ -10,6 +10,9 @@ namespace Chess.Pieces
             : base(color, position, game) { }
 
 
+        public override char Symbol => 'R';
+
+
         protected override IEnumerable<Move> GeneratePsuedoLegalMoves()
         {
             ICollection<Move> psuedoLegalMoves = new List<Move>();

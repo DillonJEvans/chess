@@ -10,6 +10,8 @@ namespace Chess.Pieces
             : base(color, position, game) { }
 
 
+        public override char Symbol => 'K';
+
         // Constants that represent the direction along the x-axis for the two different sides.
         private const int Kingside = 1;
         private const int Queenside = -1;

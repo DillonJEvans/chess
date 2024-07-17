@@ -21,6 +21,15 @@ namespace Chess.Core
         public readonly Color Color;
         public Position Position { get; internal set; }
         public IReadOnlyCollection<Move> LegalMoves => legalMoves.AsReadOnly();
+        public abstract char Symbol { get; }
+        public char ColorSymbol
+        {
+            get
+            {
+                if (Color == Color.White) return char.ToUpper(Symbol);
+                else return char.ToLower(Symbol);
+            }
+        }
 
         protected Game Game { get; }
 
@@ -230,6 +239,12 @@ namespace Chess.Core
                 return false;
             }
             return AddMove(psuedoLegalMoves, deltaX, deltaY);
+        }
+
+
+        public override string ToString()
+        {
+            return $"{ColorSymbol}{Position}";
         }
     }
 }
