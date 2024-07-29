@@ -41,13 +41,13 @@ namespace Chess.Core
         /// <a href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)">
         /// algebraic notation
         /// </a>.
-        /// Must be exactly 2 characters long. Must be lowercase.
         /// </param>
         public Position(string algebraicNotation)
         {
+            algebraicNotation = algebraicNotation.Trim();
             Contract.Requires(algebraicNotation.Length != 2,
                 "Algebraic notation must have a length of exactly 2.");
-            int x = algebraicNotation[0] - 'a';
+            int x = char.ToLower(algebraicNotation[0]) - 'a';
             int y = algebraicNotation[1] - '1';
             Contract.Requires(x < 0 || x > 7, "File must be between a and h.");
             Contract.Requires(y < 0 || y > 7, "Rank must be between 1 and 8.");
