@@ -1,8 +1,6 @@
 ﻿namespace Chess.Core
 {
-    /// <summary>
-    /// The two colors (white and black) in chess.
-    /// </summary>
+    /// <summary>The two colors (white and black) in chess.</summary>
     public enum Color
     {
         White,
@@ -10,14 +8,10 @@
     }
 
 
-    /// <summary>
-    /// Extension methods for the <c>Color</c> enum.
-    /// </summary>
+    /// <summary>Extension methods for the <c>Color</c> enum.</summary>
     public static class ColorExtension
     {
-        /// <summary>
-        /// Gets the opposite of <paramref name="color"/>.
-        /// </summary>
+        /// <summary>Gets the opposite of <paramref name="color"/>.</summary>
         /// <param name="color">The original color.</param>
         /// <returns>The opposite of <paramref name="color"/>.</returns>
         public static Color Opposite(this Color color)

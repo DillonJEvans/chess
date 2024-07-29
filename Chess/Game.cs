@@ -7,9 +7,7 @@ using System.Linq;
 
 namespace Chess
 {
-    /// <summary>
-    /// A game of chess.
-    /// </summary>
+    /// <summary>A game of chess.</summary>
     public class Game
     {
         // Temporary default constructor
@@ -17,44 +15,44 @@ namespace Chess
         {
             board = new Piece[8, 8];
             // Kings
-            WhiteKing = new King     (Color.White, new Position(4, 0), this);
-            BlackKing = new King     (Color.Black, new Position(4, 7), this);
+            WhiteKing = new King     (this, Color.White, new Position(4, 0));
+            BlackKing = new King     (this, Color.Black, new Position(4, 7));
             // White pieces (1st rank)
-            board[0, 0] = new Rook   (Color.White, new Position(0, 0), this);
-            board[1, 0] = new Knight (Color.White, new Position(1, 0), this);
-            board[2, 0] = new Bishop (Color.White, new Position(2, 0), this);
-            board[3, 0] = new Queen  (Color.White, new Position(3, 0), this);
+            board[0, 0] = new Rook   (this, Color.White, new Position(0, 0));
+            board[1, 0] = new Knight (this, Color.White, new Position(1, 0));
+            board[2, 0] = new Bishop (this, Color.White, new Position(2, 0));
+            board[3, 0] = new Queen  (this, Color.White, new Position(3, 0));
             board[4, 0] = WhiteKing;
-            board[5, 0] = new Bishop (Color.White, new Position(5, 0), this);
-            board[6, 0] = new Knight (Color.White, new Position(6, 0), this);
-            board[7, 0] = new Rook   (Color.White, new Position(7, 0), this);
+            board[5, 0] = new Bishop (this, Color.White, new Position(5, 0));
+            board[6, 0] = new Knight (this, Color.White, new Position(6, 0));
+            board[7, 0] = new Rook   (this, Color.White, new Position(7, 0));
             // White pawns (2nd rank)
-            board[0, 1] = new Pawn   (Color.White, new Position(0, 1), this);
-            board[1, 1] = new Pawn   (Color.White, new Position(1, 1), this);
-            board[2, 1] = new Pawn   (Color.White, new Position(2, 1), this);
-            board[3, 1] = new Pawn   (Color.White, new Position(3, 1), this);
-            board[4, 1] = new Pawn   (Color.White, new Position(4, 1), this);
-            board[5, 1] = new Pawn   (Color.White, new Position(5, 1), this);
-            board[6, 1] = new Pawn   (Color.White, new Position(6, 1), this);
-            board[7, 1] = new Pawn   (Color.White, new Position(7, 1), this);
+            board[0, 1] = new Pawn   (this, Color.White, new Position(0, 1));
+            board[1, 1] = new Pawn   (this, Color.White, new Position(1, 1));
+            board[2, 1] = new Pawn   (this, Color.White, new Position(2, 1));
+            board[3, 1] = new Pawn   (this, Color.White, new Position(3, 1));
+            board[4, 1] = new Pawn   (this, Color.White, new Position(4, 1));
+            board[5, 1] = new Pawn   (this, Color.White, new Position(5, 1));
+            board[6, 1] = new Pawn   (this, Color.White, new Position(6, 1));
+            board[7, 1] = new Pawn   (this, Color.White, new Position(7, 1));
             // Black pawns (7th rank)
-            board[0, 6] = new Pawn   (Color.Black, new Position(0, 6), this);
-            board[1, 6] = new Pawn   (Color.Black, new Position(1, 6), this);
-            board[2, 6] = new Pawn   (Color.Black, new Position(2, 6), this);
-            board[3, 6] = new Pawn   (Color.Black, new Position(3, 6), this);
-            board[4, 6] = new Pawn   (Color.Black, new Position(4, 6), this);
-            board[5, 6] = new Pawn   (Color.Black, new Position(5, 6), this);
-            board[6, 6] = new Pawn   (Color.Black, new Position(6, 6), this);
-            board[7, 6] = new Pawn   (Color.Black, new Position(7, 6), this);
+            board[0, 6] = new Pawn   (this, Color.Black, new Position(0, 6));
+            board[1, 6] = new Pawn   (this, Color.Black, new Position(1, 6));
+            board[2, 6] = new Pawn   (this, Color.Black, new Position(2, 6));
+            board[3, 6] = new Pawn   (this, Color.Black, new Position(3, 6));
+            board[4, 6] = new Pawn   (this, Color.Black, new Position(4, 6));
+            board[5, 6] = new Pawn   (this, Color.Black, new Position(5, 6));
+            board[6, 6] = new Pawn   (this, Color.Black, new Position(6, 6));
+            board[7, 6] = new Pawn   (this, Color.Black, new Position(7, 6));
             // Black pieces (8th rank)
-            board[0, 7] = new Rook   (Color.Black, new Position(0, 7), this);
-            board[1, 7] = new Knight (Color.Black, new Position(1, 7), this);
-            board[2, 7] = new Bishop (Color.Black, new Position(2, 7), this);
-            board[3, 7] = new Queen  (Color.Black, new Position(3, 7), this);
+            board[0, 7] = new Rook   (this, Color.Black, new Position(0, 7));
+            board[1, 7] = new Knight (this, Color.Black, new Position(1, 7));
+            board[2, 7] = new Bishop (this, Color.Black, new Position(2, 7));
+            board[3, 7] = new Queen  (this, Color.Black, new Position(3, 7));
             board[4, 7] = BlackKing;
-            board[5, 7] = new Bishop (Color.Black, new Position(5, 7), this);
-            board[6, 7] = new Knight (Color.Black, new Position(6, 7), this);
-            board[7, 7] = new Rook   (Color.Black, new Position(7, 7), this);
+            board[5, 7] = new Bishop (this, Color.Black, new Position(5, 7));
+            board[6, 7] = new Knight (this, Color.Black, new Position(6, 7));
+            board[7, 7] = new Rook   (this, Color.Black, new Position(7, 7));
             // White and Black Pieces
             pieces = new List<Piece>();
             foreach (Piece? piece in board)
@@ -70,38 +68,54 @@ namespace Chess
             CanWhiteCastleQueenside = true;
             CanBlackCastleKingside = true;
             CanBlackCastleQueenside = true;
-            legalMoves = new List<Move>();
+            EnPassantTarget = null;
+            legalMoves = new List<LegalMove>();
             UpdateLegalMoves();
         }
 
 
+        /// <summary>The color whose turn it currently is.</summary>
         public Color Turn { get; private set; }
 
+        /// <summary>The white king.</summary>
         public readonly King WhiteKing;
+        /// <summary>The black king.</summary>
         public readonly King BlackKing;
 
+        /// <summary>The pieces.</summary>
         public IReadOnlyCollection<Piece> Pieces => pieces.AsReadOnly();
+        /// <summary>The white pieces.</summary>
         public IReadOnlyCollection<Piece> WhitePieces => whitePieces.AsReadOnly();
+        /// <summary>The black pieces.</summary>
         public IReadOnlyCollection<Piece> BlackPieces => blackPieces.AsReadOnly();
 
-        public IReadOnlyCollection<Move> LegalMoves => legalMoves.AsReadOnly();
+        /// <summary>The current legal moves.</summary>
+        public IReadOnlyCollection<LegalMove> LegalMoves => legalMoves.AsReadOnly();
 
+        /// <summary>True if white has the right to castle kingside; otherwise, false.</summary>
         public bool CanWhiteCastleKingside { get; private set; }
+        /// <summary>True if white has the right to castle queenside; otherwise, false.</summary>
         public bool CanWhiteCastleQueenside { get; private set; }
+        /// <summary>True if black has the right to castle kingside; otherwise, false.</summary>
         public bool CanBlackCastleKingside { get; private set; }
+        /// <summary>True if black has the right to castle queenside; otherwise, false.</summary>
         public bool CanBlackCastleQueenside { get; private set; }
+
+        /// <summary>
+        /// The current en passant target that would be the destination of an en passant move.
+        /// <c>null</c> if the last move was not a pawn moving two squares.
+        /// </summary>
+        public Position? EnPassantTarget { get; private set; }
 
         private Piece?[,] board;
         private List<Piece> pieces;
         private List<Piece> whitePieces;
         private List<Piece> blackPieces;
 
-        private List<Move> legalMoves;
+        private List<LegalMove> legalMoves;
 
 
-        /// <summary>
-        /// Gets the piece at the position on the board.
-        /// </summary>
+        /// <summary>Gets the piece at the position on the board.</summary>
         /// <param name="x">The file (column) of the position.</param>
         /// <param name="y">The rank (row) of the position.</param>
         /// <returns>The piece at the position on the board.</returns>
@@ -110,9 +124,7 @@ namespace Chess
             return GetPiece(new Position(x, y));
         }
 
-        /// <summary>
-        /// Gets the piece at the position on the board.
-        /// </summary>
+        /// <summary>Gets the piece at the position on the board.</summary>
         /// <param name="position">The position on the board.</param>
         /// <returns>The piece at the position on the board.</returns>
         public Piece? GetPiece(Position position)
@@ -120,9 +132,7 @@ namespace Chess
             return board[position.X, position.Y];
         }
 
-        /// <summary>
-        /// Gets the piece at the position on the board.
-        /// </summary>
+        /// <summary>Gets the piece at the position on the board.</summary>
         /// <param name="algebraicNotation">
         /// The position on the board, represented by
         /// <a href="https://en.wikipedia.org/wiki/Algebraic_notation_(chess)">
@@ -136,9 +146,7 @@ namespace Chess
         }
 
 
-        /// <summary>
-        /// Retrieves the king of the specified color.
-        /// </summary>
+        /// <summary>Retrieves the king of the specified color.</summary>
         /// <param name="color">The color of the king to retrieve.</param>
         /// <returns>The king of the specified color.</returns>
         public King GetKing(Color color)
@@ -146,9 +154,7 @@ namespace Chess
             return color == Color.White ? WhiteKing : BlackKing;
         }
 
-        /// <summary>
-        /// Retrieves the pieces of the specified color.
-        /// </summary>
+        /// <summary>Retrieves the pieces of the specified color.</summary>
         /// <param name="color">The color of the pieces to retrieve.</param>
         /// <returns>The pieces of the specified color.</returns>
         public IReadOnlyCollection<Piece> GetPieces(Color color)
@@ -156,9 +162,7 @@ namespace Chess
             return color == Color.White ? WhitePieces : BlackPieces;
         }
 
-        /// <summary>
-        /// Determines if the specified color has the right to castle kingside.
-        /// </summary>
+        /// <summary>Determines if the specified color has the right to castle kingside.</summary>
         /// <param name="color">The color.</param>
         /// <returns>
         /// True if the color has the right to castle kingside; otherwise, false.
@@ -181,96 +185,110 @@ namespace Chess
         }
 
 
-        // Temporary move method
-        public void Move(Move move)
+        /// <summary>Makes a move.</summary>
+        /// <param name="move">The legal move to make.</param>
+        /// <returns>True if the move was legal and was made; otherwise, false.</returns>
+        public bool Move(LegalMove move)
         {
-            int ox = move.Origin.X;
-            int oy = move.Origin.Y;
-            int dx = move.Destination.X;
-            int dy = move.Destination.Y;
-            Piece? capturedPiece = board[dx, dy];
-            if (capturedPiece != null)
+            // If the move isn't legal, don't make it.
+            if (!LegalMoves.Contains(move))
             {
-                List<Piece> capturedPieces;
-                if (capturedPiece.Color == Color.White)
-                {
-                    capturedPieces = whitePieces;
-                }
-                else
-                {
-                    capturedPieces = blackPieces;
-                }
-                capturedPieces.Remove(capturedPiece);
-                pieces.Remove(capturedPiece);
+                return false;
             }
-            board[dx, dy] = board[ox, oy];
-            board[ox, oy] = null;
-            Piece? piece = board[dx, dy];
-            if (piece != null)
+            // Remove the captured piece.
+            if (move.CapturedPiece != null)
             {
-                piece.Position = move.Destination;
+                List<Piece> capturedPieces = GetMutablePieces(move.CapturedPiece.Color);
+                capturedPieces.Remove(move.CapturedPiece);
+                int capturedX = move.CapturedPiece.Position.X;
+                int capturedY = move.CapturedPiece.Position.Y;
+                board[capturedX, capturedY] = null;
             }
+            // Move the piece.
+            board[move.Destination.X, move.Destination.Y] = move.Piece;
+            move.Piece.Position = move.Destination;
+            board[move.Origin.X, move.Origin.Y] = null;
+            // Handle promotions.
+            if (move.Promotion != null)
+            {
+                List<Piece> pieces = GetMutablePieces(move.Piece.Color);
+                pieces.Remove(move.Piece);
+                pieces.Add(move.Promotion);
+                board[move.Piece.Position.X, move.Piece.Position.Y] = null;
+                board[move.Promotion.Position.X, move.Promotion.Position.Y] = move.Promotion;
+            }
+            // Castling rights.
+            UpdateCastlingRights(move);
+            // En Passant.
+            if (move.Piece is Pawn && Math.Abs(move.Origin.Y - move.Destination.Y) == 2)
+            {
+                int enPassantY = (move.Origin.Y + move.Destination.Y) / 2;
+                EnPassantTarget = new Position(move.Destination.X, enPassantY);
+            }
+            else
+            {
+                EnPassantTarget = null;
+            }
+            // Toggle the turn and update legal moves.
             Turn = Turn.Opposite();
             UpdateLegalMoves();
+            return true;
         }
 
 
         /// <summary>
-        /// Determines if the
-        /// <a href="https://www.chessprogramming.org/Pseudo-Legal_Move">
-        /// psuedo-legal move
-        /// </a>
-        /// is legal or not.
+        /// Updates <c>LegalMoves</c> for all pieces.
+        /// Updates <c>LegalMoves</c> for this <c>Game</c>.
         /// </summary>
-        /// <param name="psuedoLegalMove">
-        /// A
-        /// <a href="https://www.chessprogramming.org/Pseudo-Legal_Move">
-        /// psuedo-legal move
-        /// </a>.
-        /// </param>
-        /// <returns>
-        /// True if the
-        /// <a href="https://www.chessprogramming.org/Pseudo-Legal_Move">
-        /// psuedo-legal move
-        /// </a>
-        /// is legal; otherwise, false.
-        /// </returns>
-        /// <remarks>
-        /// Intended only to be called by <c>Piece</c> for each of the
-        /// <a href="https://www.chessprogramming.org/Pseudo-Legal_Move">
-        /// psuedo-legal moves
-        /// </a>
-        /// it generates.
-        /// </remarks>
-        internal bool IsLegalMove(Move psuedoLegalMove)
+        private void UpdateLegalMoves()
         {
-            // Variables to make indexing more convenient.
-            int ox = psuedoLegalMove.Origin.X;
-            int oy = psuedoLegalMove.Origin.Y;
-            int dx = psuedoLegalMove.Destination.X;
-            int dy = psuedoLegalMove.Destination.Y;
-            // Temporarily make the move.
-            Piece? capturedPiece = board[dx, dy];
-            board[dx, dy] = board[ox, oy];
-            board[ox, oy] = null;
-            // Get the king and the pieces that might be checking the king.
-            Position king = GetKing(Turn).Position;
-            IReadOnlyCollection<Piece> opposingPieces = GetPieces(Turn.Opposite());
-            // If the king is the piece being moved, use it's position
-            // after the move rather than it's position before the move.
-            if (king == psuedoLegalMove.Origin)
+            List<PsuedoLegalMove> psuedoLegalMoves = new List<PsuedoLegalMove>();
+            IReadOnlyCollection<Piece> activePieces = GetPieces(Turn);
+            IReadOnlyCollection<Piece> inactivePieces = GetPieces(Turn.Opposite());
+            // Get the psuedo-legal moves for all active pieces.
+            foreach (Piece piece in activePieces)
             {
-                king = psuedoLegalMove.Destination;
+                IEnumerable<PsuedoLegalMove> moves = piece.GeneratePsuedoLegalMoves();
+                psuedoLegalMoves.AddRange(moves);
             }
-            // Determine if the king is being attacked or not.
-            bool isKingAttacked = opposingPieces.Any(piece =>
+            legalMoves.Clear();
+            // Convert the legal moves to LegalMoves.
+            foreach (PsuedoLegalMove move in psuedoLegalMoves)
+            {
+                if (!IsLegalMove(move)) continue;
+                legalMoves.Add(new LegalMove(this, psuedoLegalMoves, move));
+            }
+            // Set each piece's legal moves.
+            foreach (Piece piece in activePieces)
+            {
+                IEnumerable<LegalMove> moves = legalMoves.Where(move => move.Piece == piece);
+                piece.SetLegalMoves(moves);
+            }
+            foreach (Piece piece in inactivePieces)
+            {
+                piece.ClearLegalMoves();
+            }
+        }
+
+
+        /// <summary>Determines if the psuedo-legal move is legal or not.</summary>
+        /// <param name="psuedoLegalMove">A psuedo-legal move.</param>
+        /// <returns>True if the psuedo-legal move is legal; otherwise, false.</returns>
+        internal bool IsLegalMove(PsuedoLegalMove move)
+        {
+            // Temporarily make the move.
+            Piece? capturedPiece = MakePsuedoLegalMove(move);
+            // Get the king and opposing pieces.
+            Color color = move.Piece.Color;
+            Position king = GetKing(color).Position;
+            IReadOnlyCollection<Piece> opposingPieces = GetPieces(color.Opposite());
+            if (king == move.Origin) king = move.Destination;
+            // Check if the king is in check after the move is made.
+            bool isLegalMove = !opposingPieces.Any(piece =>
                 piece != capturedPiece && piece.IsAttacking(king));
             // Undo the move.
-            board[ox, oy] = board[dx, dy];
-            board[dx, dy] = capturedPiece;
-            // If the king would be in check after the move is made,
-            // the move is not legal; otherwise, the move is legal.
-            return !isKingAttacked;
+            UndoPsuedoLegalMove(move, capturedPiece);
+            return isLegalMove;
         }
 
         /// <summary>
@@ -286,20 +304,122 @@ namespace Chess
             return attackingPieces.Any(piece => piece.IsAttacking(position));
         }
 
-
-        /// <summary>
-        /// Updates <c>LegalMoves</c> for all pieces.
-        /// Updates <c>LegalMoves</c> for this <c>Game</c>
-        /// to be all legal moves.
-        /// </summary>
-        private void UpdateLegalMoves()
+        /// <summary>Determines if the move checks the opposing king.</summary>
+        /// <param name="move">The move that might be checking the opposing king.</param>
+        /// <returns>True if the move checks the opposing king; otherwise, false.</returns>
+        internal bool IsCheck(PsuedoLegalMove move)
         {
-            legalMoves.Clear();
-            foreach (Piece piece in Pieces)
+            // Temporarily make the move.
+            Piece? capturedPiece = MakePsuedoLegalMove(move);
+            // Check if the opposing king is in check after the move is made.
+            Color color = move.Piece.Color;
+            Position opposingKing = GetKing(color.Opposite()).Position;
+            bool isCheck = IsAttacked(opposingKing, color);
+            // Undo the move.
+            UndoPsuedoLegalMove(move, capturedPiece);
+            return isCheck;
+        }
+
+        /// <summary>Determines if the move checkmates the opposing king.</summary>
+        /// <param name="move">The move that might be checkmating the opposing king.</param>
+        /// <returns>True if the move checkmates the opposing king; otherwise, false.</returns>
+        internal bool IsCheckmate(PsuedoLegalMove move)
+        {
+            // Temporarily make the move.
+            Piece? capturedPiece = MakePsuedoLegalMove(move);
+            // Get the defending king and pieces.
+            Color color = move.Piece.Color;
+            IReadOnlyCollection<Piece> defendingPieces = GetPieces(color.Opposite());
+            Position defendingKing = GetKing(color.Opposite()).Position;
+            // Check if the opposing king is in check and if there are no legal moves
+            // after the move is made.
+            bool isCheck = IsAttacked(defendingKing, color);
+            bool isCheckmate = true;
+            foreach (Piece piece in defendingPieces)
             {
-                piece.UpdateLegalMoves();
-                legalMoves.AddRange(piece.LegalMoves);
+                if (piece == capturedPiece) continue;
+                IEnumerable<PsuedoLegalMove> moves = piece.GeneratePsuedoLegalMoves();
+                if (moves.Any(move => IsLegalMove(move)))
+                {
+                    isCheckmate = false;
+                    break;
+                }
             }
+            // Undo the move.
+            UndoPsuedoLegalMove(move, capturedPiece);
+            return isCheck && isCheckmate;
+        }
+
+
+        /// <summary>Temporarily makes a psuedo-legal move.</summary>
+        /// <param name="move">The move to temporarily make.</param>
+        /// <returns>The captured piece, or null if no piece was captured.</returns>
+        /// <remarks>
+        /// Meant to be used in conjunction with <c>UndoPseudoLegalMove</c>.
+        /// The captured piece is not removed from the list of pieces.
+        /// </remarks>
+        private Piece? MakePsuedoLegalMove(PsuedoLegalMove move)
+        {
+            int ox = move.Origin.X;
+            int oy = move.Origin.Y;
+            int dx = move.Destination.X;
+            int dy = move.Destination.Y;
+            Piece? capturedPiece = board[dx, dy];
+            board[dx, dy] = move.Piece;
+            board[ox, oy] = null;
+            move.Piece.Position = move.Destination;
+            return capturedPiece;
+        }
+
+        /// <summary>Undoes a temporarily made psuedo-legal move.</summary>
+        /// <param name="move">The move to undo.</param>
+        /// <param name="capturedPiece">
+        /// The piece that was captured, or null if no piece was captured.
+        /// </param>
+        /// <remarks>
+        /// Meant to be used in conjunction with <c>MakePseudoLegalMove</c>.
+        /// </remarks>
+        private void UndoPsuedoLegalMove(PsuedoLegalMove move, Piece? capturedPiece)
+        {
+            int ox = move.Origin.X;
+            int oy = move.Origin.Y;
+            int dx = move.Destination.X;
+            int dy = move.Destination.Y;
+            board[ox, oy] = move.Piece;
+            board[dx, dy] = capturedPiece;
+            move.Piece.Position = move.Origin;
+        }
+
+
+        /// <summary>Updates castling rights after a move is made.</summary>
+        /// <param name="move">The move being made.</param>
+        private void UpdateCastlingRights(LegalMove move)
+        {
+            // Rook moves.
+            if (move.Origin == new Position("a1")) CanWhiteCastleQueenside = false;
+            if (move.Origin == new Position("h1")) CanWhiteCastleKingside = false;
+            if (move.Origin == new Position("a1")) CanBlackCastleQueenside = false;
+            if (move.Origin == new Position("h8")) CanBlackCastleKingside = false;
+            // King moves.
+            if (move.Origin == new Position("e1"))
+            {
+                CanWhiteCastleKingside = false;
+                CanWhiteCastleQueenside = false;
+            }
+            if (move.Origin == new Position("e8"))
+            { 
+                CanBlackCastleKingside = false;
+                CanBlackCastleQueenside = false;
+            }
+        }
+
+
+        /// <summary>Retrieves a mutable list of pieces of the specified color.</summary>
+        /// <param name="color">The color of the pieces to retrieve.</param>
+        /// <returns>A mutable list of pieces of the specified color.</returns>
+        private List<Piece> GetMutablePieces(Color color)
+        {
+            return color == Color.White ? whitePieces : blackPieces;
         }
     }
 }

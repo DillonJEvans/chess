@@ -6,16 +6,16 @@ namespace Chess.Pieces
 {
     public class Knight : Piece
     {
-        internal Knight(Color color, Position position, Game game)
-            : base(color, position, game) { }
+        internal Knight(Game game, Color color, Position position)
+            : base(game, color, position) { }
 
 
         public override char Symbol => 'N';
 
 
-        protected override IEnumerable<Move> GeneratePsuedoLegalMoves()
+        protected internal override IEnumerable<PsuedoLegalMove> GeneratePsuedoLegalMoves()
         {
-            ICollection<Move> psuedoLegalMoves = new List<Move>();
+            ICollection<PsuedoLegalMove> psuedoLegalMoves = new List<PsuedoLegalMove>();
             AddMove(psuedoLegalMoves, -1,  2); // 2 up     1 left
             AddMove(psuedoLegalMoves,  1,  2); // 2 up     1 right
             AddMove(psuedoLegalMoves,  2,  1); // 2 right  1 up

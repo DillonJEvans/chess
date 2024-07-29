@@ -6,16 +6,16 @@ namespace Chess.Pieces
 {
     public class Bishop : Piece
     {
-        internal Bishop(Color color, Position position, Game game)
-            : base(color, position, game) { }
+        internal Bishop(Game game, Color color, Position position)
+            : base(game, color, position) { }
 
 
         public override char Symbol => 'B';
 
 
-        protected override IEnumerable<Move> GeneratePsuedoLegalMoves()
+        protected internal override IEnumerable<PsuedoLegalMove> GeneratePsuedoLegalMoves()
         {
-            ICollection<Move> psuedoLegalMoves = new List<Move>();
+            ICollection<PsuedoLegalMove> psuedoLegalMoves = new List<PsuedoLegalMove>();
             AddMovesAlongRay(psuedoLegalMoves,  1,  1); // Up   Right
             AddMovesAlongRay(psuedoLegalMoves,  1, -1); // Down Right
             AddMovesAlongRay(psuedoLegalMoves, -1, -1); // Down Left

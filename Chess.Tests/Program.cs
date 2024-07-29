@@ -20,9 +20,9 @@ namespace Chess.Tests
                 Console.WriteLine(string.Join(", ", game.LegalMoves));
                 Console.WriteLine();
                 input = Console.ReadLine();
-                foreach (Move move in game.LegalMoves)
+                foreach (LegalMove move in game.LegalMoves)
                 {
-                    if (move.ToString() == input)
+                    if (input == move.San || input == move.Uci)
                     {
                         game.Move(move);
                         break;

@@ -6,8 +6,8 @@ namespace Chess.Pieces
 {
     public class King : Piece
     {
-        internal King(Color color, Position position, Game game)
-            : base(color, position, game) { }
+        internal King(Game game, Color color, Position position)
+            : base(game, color, position) { }
 
 
         public override char Symbol => 'K';
@@ -17,9 +17,9 @@ namespace Chess.Pieces
         private const int Queenside = -1;
 
 
-        protected override IEnumerable<Move> GeneratePsuedoLegalMoves()
+        protected internal override IEnumerable<PsuedoLegalMove> GeneratePsuedoLegalMoves()
         {
-            ICollection<Move> psuedoLegalMoves = new List<Move>();
+            ICollection<PsuedoLegalMove> psuedoLegalMoves = new List<PsuedoLegalMove>();
             // Non-castling moves.
             for (int i = -1; i <= 1; i++)
             {
@@ -51,7 +51,7 @@ namespace Chess.Pieces
         /// <param name="psuedoLegalMoves">The collection of psuedo-legal moves to add to.</param>
         /// <param name="xDirection">The direction along the x-axis to castle.</param>
         /// <returns>True if the move is legal and was added; otherwise, false.</returns>
-        private bool AddCastlingMove(ICollection<Move> psuedoLegalMoves, int xDirection)
+        private bool AddCastlingMove(ICollection<PsuedoLegalMove> psuedoLegalMoves, int xDirection)
         {
             // If there is a piece between the king and the rook,
             // or the king would move through an attacked square,
@@ -65,7 +65,7 @@ namespace Chess.Pieces
             // left (when castling queenside) or right (when castling kingside).
             int destionationX = Position.X + 2 * xDirection;
             Position destination = new Position(destionationX, Position.Y);
-            psuedoLegalMoves.Add(new Move(Position, destination));
+            psuedoLegalMoves.Add(new PsuedoLegalMove(this, destination));
             return true;
         }
 

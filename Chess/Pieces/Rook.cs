@@ -6,16 +6,16 @@ namespace Chess.Pieces
 {
     public class Rook : Piece
     {
-        internal Rook(Color color, Position position, Game game)
-            : base(color, position, game) { }
+        internal Rook(Game game, Color color, Position position)
+            : base(game, color, position) { }
 
 
         public override char Symbol => 'R';
 
 
-        protected override IEnumerable<Move> GeneratePsuedoLegalMoves()
+        protected internal override IEnumerable<PsuedoLegalMove> GeneratePsuedoLegalMoves()
         {
-            ICollection<Move> psuedoLegalMoves = new List<Move>();
+            ICollection<PsuedoLegalMove> psuedoLegalMoves = new List<PsuedoLegalMove>();
             AddMovesAlongRay(psuedoLegalMoves,  0,  1); // Up
             AddMovesAlongRay(psuedoLegalMoves,  1,  0); // Right
             AddMovesAlongRay(psuedoLegalMoves,  0, -1); // Down

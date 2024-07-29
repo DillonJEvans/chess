@@ -1,5 +1,4 @@
 ﻿using Chess.Core;
-using System;
 using System.Collections.Generic;
 
 
@@ -7,16 +6,16 @@ namespace Chess.Pieces
 {
     public class Pawn : Piece
     {
-        internal Pawn(Color color, Position position, Game game)
-            : base(color, position, game) { }
+        internal Pawn(Game game, Color color, Position position)
+            : base(game, color, position) { }
 
 
         public override char Symbol => 'P';
 
 
-        protected override IEnumerable<Move> GeneratePsuedoLegalMoves()
+        protected internal override IEnumerable<PsuedoLegalMove> GeneratePsuedoLegalMoves()
         {
-            ICollection<Move> psuedoLegalMoves = new List<Move>();
+            ICollection<PsuedoLegalMove> psuedoLegalMoves = new List<PsuedoLegalMove>();
 
             int forward = (Color == Color.White ? 1 : -1);
             int homeRow = (Color == Color.White ? 1 : 6);
@@ -34,7 +33,19 @@ namespace Chess.Pieces
         }
 
 
-        protected override bool AddMove(ICollection<Move> psuedoLegalMoves, int deltaX, int deltaY)
+        protected override bool CanCapture(int deltaX, int deltaY)
+        {
+            if (!Position.Add(deltaX, deltaY, out Position destination))
+            {
+                return false;
+            }
+            Piece? piece = Game.GetPiece(destination);
+            return (piece != null && piece.Color != Color) || destination == Game.EnPassantTarget;
+        }
+
+        protected override bool AddMove(ICollection<PsuedoLegalMove> psuedoLegalMoves,
+                                        int deltaX,
+                                        int deltaY)
         {
             // If the destination is not on the board, do not add the move.
             if (!Position.Add(deltaX, deltaY, out Position destination))
@@ -44,21 +55,21 @@ namespace Chess.Pieces
             // If the move does not cause the pawn to promote, just add one move.
             if (destination.Y != 0 && destination.Y != 7)
             {
-                psuedoLegalMoves.Add(new Move(Position, destination));
+                psuedoLegalMoves.Add(new PsuedoLegalMove(this, destination));
             }
             // Otherwise, add a move for each piece that the pawn can promote to.
             else
             {
                 Piece[] promotionPieces =
                 {
-                    new Queen(Color, destination, Game),
-                    new Rook(Color, destination, Game),
-                    new Bishop(Color, destination, Game),
-                    new Knight(Color, destination, Game)
+                    new Queen (Game, Color, destination),
+                    new Rook  (Game, Color, destination),
+                    new Bishop(Game, Color, destination),
+                    new Knight(Game, Color, destination)
                 };
                 foreach (Piece promotionPiece in promotionPieces)
                 {
-                    psuedoLegalMoves.Add(new Move(Position, destination, promotionPiece));
+                    psuedoLegalMoves.Add(new PsuedoLegalMove(this, destination, promotionPiece));
                 }
             }
             return true;

@@ -4,24 +4,35 @@ using System.Linq;
 
 namespace Chess.Core
 {
-    /// <summary>
-    /// A chess piece.
-    /// </summary>
+    /// <summary>A chess piece.</summary>
     public abstract class Piece
     {
-        internal Piece(Color color, Position position, Game game)
+        /// <summary>Creates a piece.</summary>
+        /// <param name="game">The game the piece belong to.</param>
+        /// <param name="color">The coloor of the piece.</param>
+        /// <param name="position">The position of the piece.</param>
+        protected internal Piece(Game game, Color color, Position position)
         {
+            Game = game;
             Color = color;
             Position = position;
-            Game = game;
-            legalMoves = new List<Move>();
+            legalMoves = new List<LegalMove>();
         }
 
 
+        /// <summary>The color of the piece.</summary>
         public readonly Color Color;
+        /// <summary>The position of the piece.</summary>
         public Position Position { get; internal set; }
-        public IReadOnlyCollection<Move> LegalMoves => legalMoves.AsReadOnly();
+        /// <summary>The current legal moves.</summary>
+        public IReadOnlyCollection<LegalMove> LegalMoves => legalMoves.AsReadOnly();
+
+        /// <summary>The symbol representing the piece.</summary>
         public abstract char Symbol { get; }
+        /// <summary>
+        /// The symbol representing the piece.
+        /// Uppercase if the piece is white, lowercase if the piece is black.
+        /// </summary>
         public char ColorSymbol
         {
             get
@@ -33,47 +44,29 @@ namespace Chess.Core
 
         protected Game Game { get; }
 
-        private List<Move> legalMoves;
+        private List<LegalMove> legalMoves;
 
 
-        /// <summary>
-        /// Updates <c>LegalMoves</c> to be a collection of all the legal moves
-        /// that this piece can make from the current board position.
-        /// </summary>
-        /// <remarks>
-        /// Intended only to be called by <c>Game</c> after a move is made.
-        /// </remarks>
-        internal void UpdateLegalMoves()
+        /// <summary>Sets <c>LegalMoves</c> to the moves.</summary>
+        /// <param name="moves">The moves to set <c>LegalMoves</c> to.</param>
+        internal void SetLegalMoves(IEnumerable<LegalMove> moves)
         {
-            legalMoves.Clear();
-            // If it is not this piece's turn, it cannot move.
-            if (Color != Game.Turn)
-            {
-                return;
-            }
-            // Otherwise, add every legal move to the legalMoves list.
-            IEnumerable<Move> psuedoLegalMoves = GeneratePsuedoLegalMoves();
-            foreach (Move psuedoLegalMove in psuedoLegalMoves)
-            {
-                if (Game.IsLegalMove(psuedoLegalMove))
-                {
-                    legalMoves.Add(psuedoLegalMove);
-                }
-            }
+            ClearLegalMoves();
+            legalMoves.AddRange(moves);
         }
 
-        /// <summary>
-        /// Determines if this piece is attacking a position on the board.
-        /// </summary>
-        /// <param name="position">
-        /// The position to check if this piece is attacking.
-        /// </param>
-        /// <returns>
-        /// True if this piece is attacking the position; otherwise, false.
-        /// </returns>
+        /// <summary>Clears <c>LegalMoves</c>.</summary>
+        internal void ClearLegalMoves()
+        {
+            legalMoves.Clear();
+        }
+
+        /// <summary>Determines if this piece is attacking a position on the board.</summary>
+        /// <param name="position">The position to check if this piece is attacking.</param>
+        /// <returns>True if this piece is attacking the position; otherwise, false.</returns>
         internal bool IsAttacking(Position position)
         {
-            IEnumerable<Move> psuedoLegalMoves = GeneratePsuedoLegalMoves();
+            IEnumerable<PsuedoLegalMove> psuedoLegalMoves = GeneratePsuedoLegalMoves();
             return psuedoLegalMoves.Any(move => move.Destination == position);
         }
 
@@ -92,7 +85,7 @@ namespace Chess.Core
         /// psuedo-legal moves
         /// </a>.
         /// </returns>
-        protected abstract IEnumerable<Move> GeneratePsuedoLegalMoves();
+        protected internal abstract IEnumerable<PsuedoLegalMove> GeneratePsuedoLegalMoves();
 
 
         /// <summary>
@@ -150,7 +143,9 @@ namespace Chess.Core
         /// The difference in Y from <c>Position</c> to the destination.
         /// </param>
         /// <returns>True if the move was added; otherwise, false.</returns>
-        protected virtual bool AddMove(ICollection<Move> psuedoLegalMoves, int deltaX, int deltaY)
+        protected virtual bool AddMove(ICollection<PsuedoLegalMove> psuedoLegalMoves,
+                                       int deltaX,
+                                       int deltaY)
         {
             // Don't add the move if the destination is not on the board.
             if (!Position.Add(deltaX, deltaY, out Position destination))
@@ -163,7 +158,7 @@ namespace Chess.Core
             {
                 return false;
             }
-            psuedoLegalMoves.Add(new Move(Position, destination));
+            psuedoLegalMoves.Add(new PsuedoLegalMove(this, destination));
             return true;
         }
 
@@ -178,9 +173,9 @@ namespace Chess.Core
         /// </param>
         /// <param name="directionX">The X of the ray's direction.</param>
         /// <param name="directionY">The Y of the ray's direction.</param>
-        protected virtual void AddMovesAlongRay(ICollection<Move> psuedoLegalMoves,
-                                        int directionX,
-                                        int directionY)
+        protected virtual void AddMovesAlongRay(ICollection<PsuedoLegalMove> psuedoLegalMoves,
+                                                int directionX,
+                                                int directionY)
         {
             Position destination = Position;
             Piece? capturedPiece = null;
@@ -194,7 +189,7 @@ namespace Chess.Core
                 // or occupied by an opposing piece.
                 if (capturedPiece?.Color != Color)
                 {
-                    psuedoLegalMoves.Add(new Move(Position, destination));
+                    psuedoLegalMoves.Add(new PsuedoLegalMove(this, destination));
                 }
             }
         }
@@ -211,7 +206,9 @@ namespace Chess.Core
         /// The difference in Y from <c>Position</c> to the destination.
         /// </param>
         /// <returns>True if the move was added; otherwise, false.</returns>
-        protected virtual bool AddNonCapturingMove(ICollection<Move> psuedoLegalMoves, int deltaX, int deltaY)
+        protected virtual bool AddNonCapturingMove(ICollection<PsuedoLegalMove> psuedoLegalMoves,
+                                                   int deltaX,
+                                                   int deltaY)
         {
             if (!IsRelativePositionUnoccupied(deltaX, deltaY))
             {
@@ -232,7 +229,9 @@ namespace Chess.Core
         /// The difference in Y from <c>Position</c> to the destination.
         /// </param>
         /// <returns>True if the move was added; otherwise, false.</returns>
-        protected virtual bool AddCapturingMove(ICollection<Move> psuedoLegalMoves, int deltaX, int deltaY)
+        protected virtual bool AddCapturingMove(ICollection<PsuedoLegalMove> psuedoLegalMoves,
+                                                int deltaX,
+                                                int deltaY)
         {
             if (!CanCapture(deltaX, deltaY))
             {
