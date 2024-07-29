@@ -200,22 +200,28 @@ namespace Chess
             {
                 List<Piece> capturedPieces = GetMutablePieces(move.CapturedPiece.Color);
                 capturedPieces.Remove(move.CapturedPiece);
-                int capturedX = move.CapturedPiece.Position.X;
-                int capturedY = move.CapturedPiece.Position.Y;
-                board[capturedX, capturedY] = null;
+                SetPieceOnBoard(move.CapturedPosition ?? default, null);
             }
             // Move the piece.
-            board[move.Destination.X, move.Destination.Y] = move.Piece;
+            SetPieceOnBoard(move.Origin, null);
+            SetPieceOnBoard(move.Destination, move.Piece);
             move.Piece.Position = move.Destination;
-            board[move.Origin.X, move.Origin.Y] = null;
+            // Move the rook when castling.
+            if (move.CastlingRook != null)
+            {
+                SetPieceOnBoard(move.CastlingRookOrigin ?? default, null);
+                SetPieceOnBoard(move.CastlingRookDestination ?? default, move.CastlingRook);
+                move.CastlingRook.Position = move.CastlingRookDestination ?? default;
+            }
             // Handle promotions.
             if (move.Promotion != null)
             {
                 List<Piece> pieces = GetMutablePieces(move.Piece.Color);
                 pieces.Remove(move.Piece);
                 pieces.Add(move.Promotion);
-                board[move.Piece.Position.X, move.Piece.Position.Y] = null;
-                board[move.Promotion.Position.X, move.Promotion.Position.Y] = move.Promotion;
+                SetPieceOnBoard(move.Piece.Position, null);
+                SetPieceOnBoard(move.Destination, move.Promotion);
+                move.Promotion.Position = move.Destination;
             }
             // Castling rights.
             UpdateCastlingRights(move);
@@ -360,13 +366,9 @@ namespace Chess
         /// </remarks>
         private Piece? MakePsuedoLegalMove(PsuedoLegalMove move)
         {
-            int ox = move.Origin.X;
-            int oy = move.Origin.Y;
-            int dx = move.Destination.X;
-            int dy = move.Destination.Y;
-            Piece? capturedPiece = board[dx, dy];
-            board[dx, dy] = move.Piece;
-            board[ox, oy] = null;
+            Piece? capturedPiece = GetPiece(move.Destination);
+            SetPieceOnBoard(move.Origin, null);
+            SetPieceOnBoard(move.Destination, move.Piece);
             move.Piece.Position = move.Destination;
             return capturedPiece;
         }
@@ -381,12 +383,8 @@ namespace Chess
         /// </remarks>
         private void UndoPsuedoLegalMove(PsuedoLegalMove move, Piece? capturedPiece)
         {
-            int ox = move.Origin.X;
-            int oy = move.Origin.Y;
-            int dx = move.Destination.X;
-            int dy = move.Destination.Y;
-            board[ox, oy] = move.Piece;
-            board[dx, dy] = capturedPiece;
+            SetPieceOnBoard(move.Origin, move.Piece);
+            SetPieceOnBoard(move.Destination, capturedPiece);
             move.Piece.Position = move.Origin;
         }
 
@@ -420,6 +418,14 @@ namespace Chess
         private List<Piece> GetMutablePieces(Color color)
         {
             return color == Color.White ? whitePieces : blackPieces;
+        }
+
+        /// <summary>Sets the position on the board to the piece.</summary>
+        /// <param name="position">The position on the board to set.</param>
+        /// <param name="piece">The piece to set the position on the board to.</param>
+        private void SetPieceOnBoard(Position position, Piece? piece)
+        {
+            board[position.X, position.Y] = piece;
         }
     }
 }

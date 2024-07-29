@@ -35,6 +35,21 @@ namespace Chess.Core
             IsCastle = (Piece is King && Math.Abs(Origin.X - Destination.X) > 1);
             IsKingsideCastle = (IsCastle && Origin.X < Destination.X);
             IsQueensideCastle = (IsCastle && Origin.X > Destination.X);
+            // Castling rook.
+            if (IsCastle)
+            {
+                int rookX = IsQueensideCastle ? 0 : 7;
+                CastlingRook = (Rook?) game.GetPiece(rookX, Origin.Y);
+                CastlingRookOrigin = CastlingRook?.Position;
+                int destinationX = IsQueensideCastle ? 3 : 5;
+                CastlingRookDestination = new Position(destinationX, Destination.Y);
+            }
+            else
+            {
+                CastlingRook = null;
+                CastlingRookOrigin = null;
+                CastlingRookDestination = null;
+            }
             // Check and checkmate.
             IsCheck = game.IsCheck(move);
             IsCheckmate = game.IsCheckmate(move);
@@ -79,12 +94,17 @@ namespace Chess.Core
         public bool IsCapture => CapturedPiece != null;
         /// <summary>True if the move is a promotion; otherwise, false.</summary>
         public bool IsPromotion => Promotion != null;
+
         /// <summary>True if the move is a castling move; otherwise, false.</summary>
         public readonly bool IsCastle;
         /// <summary>True if the move is a kingside castle; otherwise, false.</summary>
         public readonly bool IsKingsideCastle;
         /// <summary>True if the move is a queenside castle; otherwise, false.</summary>
         public readonly bool IsQueensideCastle;
+        public readonly Rook? CastlingRook;
+        public readonly Position? CastlingRookOrigin;
+        public readonly Position? CastlingRookDestination;
+
         /// <summary>True if the move is an en passant capture; otherwise, false.</summary>
         public readonly bool IsEnPassant;
         /// <summary>True if the move checks the opposing king; otherwise, false.</summary>
