@@ -63,7 +63,9 @@ namespace Chess
             whitePieces = pieces.Where(piece => piece.Color == Color.White).ToList();
             blackPieces = pieces.Where(piece => piece.Color == Color.Black).ToList();
             // Legal moves
-            Turn = Color.White;
+            ActiveColor = Color.White;
+            FullMoveCount = 1;
+            HalfMoveClock = 0;
             CanWhiteCastleKingside = true;
             CanWhiteCastleQueenside = true;
             CanBlackCastleKingside = true;
@@ -75,7 +77,13 @@ namespace Chess
 
 
         /// <summary>The color whose turn it currently is.</summary>
-        public Color Turn { get; private set; }
+        public Color ActiveColor { get; private set; }
+        /// <summary>
+        /// The number of full moves. Starts at 1 and is incremented after Black's move.
+        /// </summary>
+        public int FullMoveCount { get; private set; }
+        /// <summary>The number of halfmoves since the last capture or pawn advance.</summary>
+        public int HalfMoveClock { get; private set; }
 
         /// <summary>The white king.</summary>
         public readonly King WhiteKing;
@@ -235,8 +243,18 @@ namespace Chess
             {
                 EnPassantTarget = null;
             }
-            // Toggle the turn and update legal moves.
-            Turn = Turn.Opposite();
+            // Update the full move and half move counters,
+            // toggle the active color, and update legal moves.
+            if (ActiveColor == Color.Black) FullMoveCount++;
+            if (move.IsCapture || move.Piece is Pawn)
+            {
+                HalfMoveClock = 0;
+            }
+            else
+            {
+                HalfMoveClock++;
+            }
+            ActiveColor = ActiveColor.Opposite();
             UpdateLegalMoves();
             return true;
         }
@@ -249,8 +267,8 @@ namespace Chess
         private void UpdateLegalMoves()
         {
             List<PsuedoLegalMove> psuedoLegalMoves = new List<PsuedoLegalMove>();
-            IReadOnlyCollection<Piece> activePieces = GetPieces(Turn);
-            IReadOnlyCollection<Piece> inactivePieces = GetPieces(Turn.Opposite());
+            IReadOnlyCollection<Piece> activePieces = GetPieces(ActiveColor);
+            IReadOnlyCollection<Piece> inactivePieces = GetPieces(ActiveColor.Opposite());
             // Get the psuedo-legal moves for all active pieces.
             foreach (Piece piece in activePieces)
             {

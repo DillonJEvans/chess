@@ -1,4 +1,5 @@
 ﻿using Chess.Core;
+using Chess.Serialization;
 using System.Diagnostics;
 using System.Text;
 
@@ -18,9 +19,11 @@ namespace Chess.Tests
                 Console.Clear();
                 Console.WriteLine($"Time Elapsed: {stopwatch.ElapsedTicks / 10000f} ms");
                 Console.WriteLine();
+                Console.WriteLine(Fen.Serialize(game));
+                Console.WriteLine();
                 Console.WriteLine(GameToAscii(game));
                 Console.WriteLine();
-                Console.WriteLine($"{game.Turn}'s Turn");
+                Console.WriteLine($"{game.ActiveColor}'s Turn");
                 Console.WriteLine();
                 Console.WriteLine($"{game.LegalMoves.Count} Legal Moves:");
                 Console.WriteLine(string.Join(", ", game.LegalMoves));
