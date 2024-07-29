@@ -101,8 +101,18 @@ namespace Chess.Core
         public readonly bool IsKingsideCastle;
         /// <summary>True if the move is a queenside castle; otherwise, false.</summary>
         public readonly bool IsQueensideCastle;
+        /// <summary>
+        /// The rook being castled with, or null if the move is not a castling move.
+        /// </summary>
         public readonly Rook? CastlingRook;
+        /// <summary>
+        /// The starting position of the castling rook,
+        /// or null if the move is not a castling move.
+        /// </summary>
         public readonly Position? CastlingRookOrigin;
+        /// <summary>
+        /// The ending position of the castling rook, or null if the move is not a castling move.
+        /// </summary>
         public readonly Position? CastlingRookDestination;
 
         /// <summary>True if the move is an en passant capture; otherwise, false.</summary>

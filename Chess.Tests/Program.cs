@@ -1,4 +1,5 @@
 ﻿using Chess.Core;
+using System.Diagnostics;
 using System.Text;
 
 
@@ -8,14 +9,19 @@ namespace Chess.Tests
     {
         public static void Main()
         {
+            Stopwatch? stopwatch = Stopwatch.StartNew();
             Game game = new();
+            stopwatch.Stop();
             string? input;
             do
             {
                 Console.Clear();
+                Console.WriteLine($"Time Elapsed: {stopwatch.ElapsedTicks / 10000f} ms");
+                Console.WriteLine();
                 Console.WriteLine(GameToAscii(game));
                 Console.WriteLine();
                 Console.WriteLine($"{game.Turn}'s Turn");
+                Console.WriteLine();
                 Console.WriteLine($"{game.LegalMoves.Count} Legal Moves:");
                 Console.WriteLine(string.Join(", ", game.LegalMoves));
                 Console.WriteLine();
@@ -24,7 +30,9 @@ namespace Chess.Tests
                 {
                     if (input == move.San || input == move.Uci)
                     {
+                        stopwatch = Stopwatch.StartNew();
                         game.Move(move);
+                        stopwatch.Stop();
                         break;
                     }
                 }
