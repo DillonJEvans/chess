@@ -1,4 +1,5 @@
 ﻿using Chess.Core;
+using System;
 using System.Collections.Generic;
 
 
@@ -30,6 +31,13 @@ namespace Chess.Pieces
             AddCapturingMove(psuedoLegalMoves, 1, forward);
 
             return psuedoLegalMoves;
+        }
+
+
+        protected internal override bool IsAttacking(Position position)
+        {
+            int forward = (Color == Color.White ? 1 : -1);
+            return Position.Y + forward == position.Y && Math.Abs(Position.X - position.X) == 1;
         }
 
 
